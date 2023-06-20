@@ -1,0 +1,37 @@
+from pymongo import MongoClient
+from faker import Faker
+
+# Установка соединения с базой данных MongoDB
+client = MongoClient('mongodb://root:password@10.54.14.136:27017')
+db = client['db_test']
+collection = db['test']
+
+# Создание экземпляра Faker для генерации случайных данных
+fake = Faker()
+
+# Определение количества записей
+num_records = 45000
+
+# Генерация и добавление документов в коллекцию
+for _ in range(num_records):
+    record = {
+        'uuid': fake.uuid4(),
+        'address': fake.ipv4(),
+        'port': fake.random_int(min=1026, max=9999),
+        'login': fake.email(),
+        'password': fake.password(),
+        'certificate': fake.sha256(),
+        'private_key': fake.md5(),
+        'server_certificate': fake.sha1(),
+        'websocket': fake.boolean(),
+        'user': fake.boolean(),
+        'tls': fake.boolean(),
+        'mtls': fake.boolean(),
+        'clean_start': fake.boolean(),
+        'online': fake.random_int(min=0, max=256)
+    }
+    collection.insert_one(record)
+    print("Document add")
+
+# Закытие соединения с mongo
+client.close()
